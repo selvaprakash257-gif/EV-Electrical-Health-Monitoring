@@ -1,3 +1,9 @@
+import sqlite3
+# Connect to the historical database
+connection = sqlite3.connect("ev_health_monitor.db")
+cursor = connection.cursor()
+
+print("SQLite database connected!")
 import serial
 from collections import deque
 
@@ -47,6 +53,24 @@ while True:
 
     # Add to deque
     readings.append(reading)
+    
+    # Save the current sensor reading to SQLite
+    cursor.execute("""
+        INSERT INTO readings
+        (temperature, voltage, current, power, status)
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        temperature,
+        voltage,
+        current,
+        power,
+        status
+    ))
+
+    connection.commit()
+
+    print("Reading saved to database!")
+
 
     print("\nNew Reading:")
     print("Temperature:", temperature, "°C")
