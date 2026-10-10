@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "author": "Anonymous maker",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": -9.6, "left": -4.76, "attrs": {} },
+    { "type": "wokwi-ds18b20", "id": "temp1", "top": -10.73, "left": 186.48, "attrs": {} },
+    {
+      "type": "wokwi-resistor",
+      "id": "r1",
+      "top": 253.55,
+      "left": 134.4,
+      "attrs": { "value": "4700" }
+    },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": -135.7, "left": 105.4, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot2", "top": -126.1, "left": 211, "attrs": {} }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "temp1:VCC", "esp:5V", "red", [ "v211.2", "h-307.2", "v-48" ] ],
+    [ "temp1:DQ", "esp:4", "green", [ "v0" ] ],
+    [ "temp1:DQ", "r1:2", "green", [ "v0" ] ],
+    [ "pot1:GND", "esp:GND.1", "black", [ "v278.4", "h-201.6", "v-124.8" ] ],
+    [ "pot1:VCC", "esp:5V", "red", [ "v288", "h-240.8", "v-38.4" ] ],
+    [ "pot2:SIG", "esp:35", "green", [ "v38.4", "h-326.8", "v86.4" ] ],
+    [ "pot1:SIG", "esp:34", "green", [ "v38.4", "h-144.4", "v0", "h-105.6", "v96" ] ],
+    [ "r1:1", "esp:5V", "red", [ "v0", "h-240", "v-67.2" ] ],
+    [ "pot2:GND", "esp:GND.1", "black", [ "v268.8", "h-307.2", "v-67.2" ] ],
+    [ "temp1:GND", "esp:GND.1", "black", [ "v172.8", "h-259.2", "v-67.2" ] ],
+    [ "pot2:VCC", "esp:5V", "red", [ "v336", "h-384.8", "v-76.8" ] ]
+  ],
+  "dependencies": {}
+}

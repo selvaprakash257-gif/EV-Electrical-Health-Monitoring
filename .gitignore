@@ -1,0 +1,13 @@
+
+# Python generated files
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Arduino compiled build files
+build/
+*.elf
+*.bin
+*.map

@@ -1,0 +1,5 @@
+[wokwi]
+version = 1
+firmware = "build/ev_health_monitor.ino.elf"
+elf = "build/ev_health_monitor.ino.elf"
+rfc2217ServerPort = 4000
