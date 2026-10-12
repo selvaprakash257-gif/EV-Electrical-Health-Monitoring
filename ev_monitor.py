@@ -51,9 +51,17 @@ while True:
         "status": status
     }
 
-    # Add to deque
-    readings.append(reading)
     
+    
+    # Check for invalid DS18B20 temperature readings
+    if temperature <= -100:
+        print("WARNING: Invalid temperature reading. Skipping database save.")
+        continue
+
+    # Add to deque
+       
+        readings.append(reading)
+
     # Save the current sensor reading to SQLite
     cursor.execute("""
         INSERT INTO readings

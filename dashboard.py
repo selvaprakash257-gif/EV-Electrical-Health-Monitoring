@@ -1,6 +1,8 @@
-from streamlit_autorefresh import st_autorefresh
+
 import sqlite3
+import pandas as pd
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
 
 st.set_page_config(
     page_title="EV Electrical Health Monitor",
@@ -10,7 +12,9 @@ st.set_page_config(
 
 st.title("⚡ EV Electrical Health Monitoring System")
 st.caption("Electrical data from your SQLite database")
+
 st_autorefresh(interval=2000, key="dashboard_refresh")
+
 
 def get_latest_reading():
     connection = sqlite3.connect("ev_health_monitor.db")
@@ -25,8 +29,31 @@ def get_latest_reading():
 
     reading = cursor.fetchone()
     connection.close()
+
     return reading
 
+
+def get_historical_readings():
+    connection = sqlite3.connect("ev_health_monitor.db")
+
+    query = """
+        SELECT timestamp, temperature, voltage, current, power
+        FROM (
+            SELECT id, timestamp, temperature, voltage, current, power
+            FROM readings
+            ORDER BY id DESC
+            LIMIT 10
+        )
+        ORDER BY id ASC
+    """
+
+    dataframe = pd.read_sql_query(query, connection)
+    connection.close()
+
+    return dataframe
+
+
+# Latest electrical reading
 reading = get_latest_reading()
 
 if reading is None:
@@ -50,7 +77,36 @@ else:
         st.error(f"Status: {status}")
 
     st.caption(f"Last stored reading: {timestamp}")
+
     st.info(
-        "Values are taken from the latest stored database record. "
-        "They update when the dashboard reruns."
+        "Values come from the latest stored database record "
+        "and update automatically."
     )
+
+
+# Historical electrical graphs
+st.divider()
+st.header("📈 Historical Electrical Data")
+
+history = get_historical_readings()
+
+if history.empty:
+    st.warning("No historical readings available yet.")
+else:
+    history["timestamp"] = pd.to_datetime(history["timestamp"])
+    history["time"] = history["timestamp"].dt.strftime("%H:%M:%S")
+
+    chart_data = history.set_index("time")
+
+    st.subheader("🌡️ Battery Temperature (°C)")
+    st.line_chart(chart_data[["temperature"]])
+
+    st.subheader("⚡ Battery Voltage (V)")
+    st.line_chart(chart_data[["voltage"]])
+
+    st.subheader("🔌 Battery Current (A)")
+    st.line_chart(chart_data[["current"]])
+
+    st.subheader("📊 Electrical Power (W)")
+    st.line_chart(chart_data[["power"]])
+
