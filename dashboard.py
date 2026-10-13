@@ -68,20 +68,62 @@ else:
     col3.metric("Current", f"{current:.2f} A")
     col4.metric("Power", f"{power / 1000:.2f} kW")
 
+    
     st.divider()
     st.subheader("Overall Electrical Health")
 
     if status == "NORMAL":
-        st.success(f"Status: {status}")
+        st.success("NORMAL — All monitored values are within the configured limits.")
     else:
-        st.error(f"Status: {status}")
+        st.error("ALERT — One or more electrical readings need attention.")
+
+        reasons = []
+
+        if temperature >= 45:
+            reasons.append(
+                "High temperature: The temperature is above the "
+                "configured limit. Check the sensor and cooling system."
+            )
+
+        if voltage < 330:
+            reasons.append(
+                "Low voltage: The voltage is below 330 V. "
+                "Check the power supply and voltage sensor."
+            )
+        elif voltage > 420:
+            reasons.append(
+                "High voltage: The voltage is above 420 V. "
+                "Check the power supply and voltage sensor."
+            )
+
+        if current > 80:
+            reasons.append(
+                "High current: The current is above 80 A. "
+                "Check the electrical load and current sensor."
+            )
+
+        if power > 30000:
+            reasons.append(
+                "High power: The measured power is above 30 kW. "
+                "Check the voltage and current readings."
+            )
+
+        if reasons:
+            st.markdown("**What needs attention?**")
+            for reason in reasons:
+                st.warning(reason)
+        else:
+            st.info(
+                "The system reported an alert, but the cause was not "
+                "identified by these checks. Verify the sensor readings."
+            )
 
     st.caption(f"Last stored reading: {timestamp}")
-
     st.info(
         "Values come from the latest stored database record "
         "and update automatically."
     )
+
 
 
 # Historical electrical graphs
